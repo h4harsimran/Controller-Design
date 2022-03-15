@@ -1,17 +1,10 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Mar  4 13:41:50 2021
-
-@author: harsi
-"""
-
 import numpy as np
 import pandas as pd
 import math
 from scipy.optimize import minimize
 from scipy.integrate import solve_ivp
 
-#%% state equation
+#%% Define Non-linear state equation
 def f(X0,U):
     x1,x2,x3,x4=X0
     u10,u20=U
@@ -21,18 +14,14 @@ def f(X0,U):
     dx4=(1-r1)*k1*u10/A4-a4*(math.sqrt(2*g*x4))/A4
     return np.array([dx1,dx2,dx3,dx4])
 
-# def sol_NLF(x0,us):
-#     x0= x0.reshape(4,)
-#     us = us.reshape(2,)
-#     sol_original = solve_ivp(fun=f, t_span=[0.,dt], y0= x0, t_eval=[0.,dt], args=[us])
-#     x0=sol_original.y[:,-1]
-#     return x0
+#%% define euler solver
 def sol_NLF(x0,us):
     x0= x0.reshape(4,)
     us = us.reshape(2,)
     x0=x0+dt*f(x0,us)
     return x0
-#%% 
+
+#%% defie inputs and outputs sizes
 
 A=np.ones((4,4))
 Ad=A
@@ -51,16 +40,8 @@ Q[0,0]=10
 Q[1,1]=10
 
 R=Rc1*np.eye(B.shape[1])
-# Q=np.transpose(C)@C+0.001*np.eye(Ad.shape[1]) #state weight matrix
-# R=0.001*np.eye(Bd.shape[1]) #input weight matrix
-#%% define MPC functions
 
-# def f(Ad,Bd,xk,uk): 
-#     x = np.zeros(shape=(xk.size,1))
-#     x=Ad@xk+Bd@uk #state equation in discrete time
-#     return x
-
-
+#%% Define MPC fucntions
 def Uconv(U,N,k):
     Unew=np.zeros((N,k))
     for i in range(k):
@@ -92,9 +73,9 @@ def mpc_obj(U, Q, R, xk, N):
     return J.flatten() 
 
         
-#%%
-umax = 3
-N = 3
+#%% MPC parameters
+umax = 3 #input bounds
+N = 3 #prediction horizon, change it to get better results with trial and error
 ## Closed-loop simulation & predictions
 tk = np.arange(0,300/dt) # simulate for 35 steps
 # each state vector is saved as a 2 by 1 vector - corresponds to the last two indices in x
@@ -103,7 +84,7 @@ x = np.zeros((len(tk),Ad.shape[1],1))
 u = np.zeros((len(tk)-1,Bd.shape[1])) # store actually implemented control inputs
 
 
-#%%
+#%% Process parameters
 r1,r2=[0.7,0.6]
 k1,k2=[3.33,3.35]
 a1,a2,a3,a4=[0.071,0.057,0.071,0.057]
@@ -119,7 +100,7 @@ x00=X0
 x[0,:,:] =x00.reshape((Ad.shape[1],1))  # initial condition
 # x[0,:,:] = np.array([[-1],[-0.1]])
 
-
+#%% MPC solved
 for k in range(0,tk.size-1):
     # only the first u is actually implemented
     #u[k,:] = 0 # set u = 0 to generate open-loop trajectory
@@ -128,30 +109,8 @@ for k in range(0,tk.size-1):
     u[k,:] = uk
     xsol = sol_NLF(xk, uk)
     x[k+1,:,:]=xsol.reshape((4,1)) # the state at the next step
-#%%%
-# from matplotlib.pyplot import *
-# figure(1)
-# plot(tk*dt,x[:,0,:], tk*dt, x[:,1,:])
-# xlabel('k')
-# ylabel('x')
-# legend(['x1', 'x2'])
 
-# figure(2)
-# plot(tk*dt,x[:,2,:],tk*dt, x[:,3,:])
-# xlabel('k')
-# ylabel('x')
-# legend(['x3', 'x4'])
-
-# figure(3)
-# uforplotting = np.zeros(shape=(tk.size,2))
-# uforplotting[0,:] = u[0,:]
-# for k in range(1,tk.size):
-#     uforplotting[k,:] = u[k-1,:]
-# step(tk*dt,uforplotting)
-# xlabel('k')
-# ylabel('u')
-# legend(['u1','u2'])
-#%%
+#%% Plots
 from matplotlib.pyplot import *
 figure(1)
 plot(tk*dt,x[:,0,:], tk*dt, x[:,1,:])
