@@ -45,6 +45,7 @@ Ai = Area of ith tank
 
 Based on the principles of mass conservation, a non-linear dynamic model of the system has
 been obtained as shown below:
+
 ![image](https://user-images.githubusercontent.com/25398418/158437266-1fdb843b-2e3c-4878-94a4-d32ae5c0c82e.png)
 
 The values of the parameters used for the model under study have been tabulated below[2]:
