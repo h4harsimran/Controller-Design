@@ -1,11 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Jan 28 16:21:27 2021
-
-@author: harsi
-"""
-
-
 import numpy as np
 import pandas as pd
 from scipy.integrate import odeint
@@ -15,7 +7,7 @@ from scipy.optimize import fsolve
 import sympy as sp
 from IPython.display import display
 
-#%%
+#%% Setting Constant values and intial values
 r1,r2=[0.7,0.6]
 k1,k2=[3.33,3.35]
 a1,a2,a3,a4=[0.071,0.057,0.071,0.057]
@@ -26,7 +18,7 @@ g=981
 X0=[x10,x20,x30,x40]
 
 
-#%% define equations
+#%% define differential equation model
 def f(X0,t):
     x1,x2,x3,x4=X0
     dx1=r1*k1*u10/A1+a3*(math.sqrt(2*g*x3))/A1-a1*(math.sqrt(2*g*x1))/A1
@@ -34,6 +26,7 @@ def f(X0,t):
     dx3=(1-r2)*k2*u20/A3-a3*(math.sqrt(2*g*x3))/A3 
     dx4=(1-r1)*k1*u10/A4-a4*(math.sqrt(2*g*x4))/A4
     return [dx1,dx2,dx3,dx4]
+
 #%% create plot values and integrate
 tl=500
 tlk=100
@@ -85,8 +78,6 @@ function_matrix = sp.Matrix([dx1,dx2,dx3,dx4])
 J_x=function_matrix.jacobian([x1,x2,x3,x4])
 J_xval=np.array(J_x.subs([(x1,st[0]),(x2,st[1]),(x3,st[2]),(x4,st[3])]),np.float)
 
-
-
 x1,x2,x3,x4=st
 u1,u2=sp.symbols('u1,u2', real=True)
 dx1=r1*k1*u1/A1+a3*(sp.sqrt(2*g*x3))/A1-a1*(sp.sqrt(2*g*x1))/A1
@@ -96,6 +87,8 @@ dx4=(1-r1)*k1*u1/A4-a4*(sp.sqrt(2*g*x4))/A4
 function_matrix = sp.Matrix([dx1,dx2,dx3,dx4])
 J_u=function_matrix.jacobian([u1,u2])
 J_uval=np.array(J_u.subs([(u1,u10),(u2,u20)]),np.float)
+
+
 #%%% export to excel
 df1=pd.DataFrame(J_xval)
 df1.to_excel('J_xval.xlsx', index=False)
