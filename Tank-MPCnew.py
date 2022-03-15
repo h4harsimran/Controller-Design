@@ -1,15 +1,9 @@
-
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Jan 29 15:24:34 2021
-
-@author: harsi
-"""
 import numpy as np
 import pandas as pd
 from scipy.optimize import minimize
 from scipy.signal import cont2discrete
 
+#%% Import Jacobian outputs
 df1=pd.read_excel('J_xval.xlsx')
 
 df2=pd.read_excel('J_uval.xlsx')
@@ -39,8 +33,7 @@ Q[0,0]=10
 Q[1,1]=10
 
 R=Rc1*np.eye(B.shape[1])
-# Q=np.transpose(C)@C+0.001*np.eye(Ad.shape[1]) #state weight matrix
-# R=0.001*np.eye(Bd.shape[1]) #input weight matrix
+
 #%% define MPC functions
 
 def f(Ad,Bd,xk,uk): 
@@ -76,19 +69,16 @@ def mpc_obj(U, Ad, Bd, Q, R, xk, N):
         J += 0.5*np.transpose(uk)@R@uk + 0.5*(np.transpose(xk))@Q@xk 
     return J.flatten() 
 
-        
-#%%
-umax = 3
-N = 8
+#%% MPC parameters
+umax = 3 #bounds on inputs
+N = 8 #Prediction horizon, change it to get better results by trail and error
 ## Closed-loop simulation & predictions
 tk = np.arange(0,300/dt) # simulate for 35 steps
 # each state vector is saved as a 2 by 1 vector - corresponds to the last two indices in x
 x = np.zeros((len(tk),Ad.shape[1],1))
-#y = np.zeros((len(tk),Cd.shape[0]))
 u = np.zeros((len(tk)-1,Bd.shape[1])) # store actually implemented control inputs
 
-
-#%%
+#%% Define process parameters
 r1,r2=[0.7,0.6]
 k1,k2=[3.33,3.35]
 a1,a2,a3,a4=[0.071,0.057,0.071,0.057]
@@ -103,7 +93,7 @@ Xs=np.array([13,13.5,1.72,1.5])#set point
 x00=X0-Xs
 x[0,:,:] =x00.reshape((Ad.shape[1],1))  # initial condition
 
-
+#%% solve MPC
 
 for k in range(0,tk.size-1):
     # only the first u is actually implemented
@@ -114,7 +104,8 @@ for k in range(0,tk.size-1):
     u[k,:] = uk
     xsol = f(Ad, Bd, xk, uk.reshape((Bd.shape[1],1)))
     x[k+1,:,:]=xsol # the state at the next step
-#%%%
+    
+#%%% Plots
 from matplotlib.pyplot import *
 figure(1)
 plot(tk*dt,x[:,0,:]+Xs[0], tk*dt, x[:,1,:]+Xs[1])
@@ -140,15 +131,3 @@ step(tk*dt,uforplotting)
 xlabel('Time (sec)')
 ylabel('Pump Voltage (V)')
 legend(['u1','u2'])
-#%%
-# xnew1=np.zeros((tk.size,4,1))
-# xnew1[0,:,:]=np.array([12.4,12.7,1.8,1.4]).reshape((4,1))
-# xnew1[1,:,:]=xnew1[0,:,:]+x[1,:,:]
-# for i in range(tk.size-2):
-#     xnew1[i+2,:,:]=x[i+2,:,:]+xnew1[i,:,:]
-    
-# figure(4)
-# plot(tk,xnew1[:,0,:], tk, xnew1[:,1,:])
-# xlabel('k')
-# ylabel('x')
-# legend(['x1', 'x2'])
