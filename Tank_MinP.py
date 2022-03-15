@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Feb 23 13:31:26 2021
-
-@author: harsi
-"""
-
 import numpy as np
 from numpy import sqrt
 from scipy.integrate import solve_bvp
@@ -51,6 +44,7 @@ dx4=(1-r1)*k1*u1/A4-a4*(sp.sqrt(2*g*x4))/A4
 f_m = sp.Matrix([dx1,dx2,dx3,dx4])
 x=sp.Matrix([x1,x2,x3,x4])
 u=sp.Matrix([u1,u2])
+
 #%%% Hamiltonian calculation
 g=np.transpose(x-Xs)@Q@(x-Xs)+np.transpose(u-U0)@R@(u-U0)
 p_m = sp.Matrix([p1,p2,p3,p4])
@@ -66,23 +60,13 @@ u2_s=sp.diff(H,u2)[0]
 
 sol_u=sp.solve((u1_s,u2_s),(u1,u2)) #solving for u
 
-#%% subsituting u in state and costate
-
-# dx1=dx1.subs([(u1,sol_u[u1]),(u2,sol_u[u2])])
-# dx2=dx2.subs([(u1,sol_u[u1]),(u2,sol_u[u2])])
-# dx3=dx3.subs([(u1,sol_u[u1]),(u2,sol_u[u2])])
-# dx4=dx4.subs([(u1,sol_u[u1]),(u2,sol_u[u2])])
-# p1_s=p1_s.subs([(u1,sol_u[u1]),(u2,sol_u[u2])])
-# p2_s=p2_s.subs([(u1,sol_u[u1]),(u2,sol_u[u2])])
-# p3_s=p3_s.subs([(u1,sol_u[u1]),(u2,sol_u[u2])])
-# p4_s=p4_s.subs([(u1,sol_u[u1]),(u2,sol_u[u2])])
-
 #%% saving subsituted equations for bvp
-# df=pd.DataFrame([dx1,dx2,dx3,dx4,p1_s,p2_s,p3_s,p4_s])
+
 df=pd.DataFrame([dx1,dx2,dx3,dx4,p1_s,p2_s,p3_s,p4_s,sol_u[u1],sol_u[u2]])
 df.columns=['Func']
 df=df['Func']
 df=df.astype('str')
+
 #%% define function for BVP 
 
 def f(t,X): 
@@ -109,6 +93,7 @@ def f(t,X):
     
     
     return np.vstack((f1,f2,f3,f4,fp1,fp2,fp3,fp4))
+
 #%% Boundary conditionbs
 def bc(ya,yb):
     return np.array([ya[0]-x10,ya[1]-x20,ya[2]-x30,ya[3]-x40,yb[4],yb[5],yb[6],yb[7]])
@@ -124,7 +109,7 @@ sol=solve_bvp(f,bc,t,Xa) #BVP solver
 #%%optimal input
 uf1=sol_u[u1]
 uf2=sol_u[u2]
-#%%
+
 uopt1=np.zeros(t.size)
 uopt1[0]=u10
 uopt2=np.zeros(t.size)
