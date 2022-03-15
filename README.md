@@ -54,7 +54,7 @@ The values of the parameters used for the model under study have been tabulated 
 
 ## Python files explained.
 
-**1. Tank jacobian.py:** To define model parameters, model function, perform steady state analysis, Calcualte Jacobian and export to excel files.
+**1. Tank jacobian.py:** To define model parameters, model function, perform steady state analysis, Calcualte Jacobian and export to excel files (J_uval.xlsx, J_xval.xlsx).
 
 **2. Tank-LQR.py:** Import Jacobian outputs, define State equation, Define LQR parameters (Use const function parameters to tune the controller response with trial and error), Solve Riccati equation to calculate gain K, Silmulate Linear and Non linear LQR controller.
 
