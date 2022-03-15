@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Jan 27 17:48:08 2021
-
-@author: harsi
-"""
 import numpy as np
 import pandas as pd
 from scipy.linalg import solve_continuous_are
@@ -22,14 +16,15 @@ B=np.array(df2)
 C=np.array([[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]])
 D=np.array([[0,0],[0,0]])
 
-#%% LQR parameters
+#%% LQR weight parameters
+
 Qc1=0.001
 Qc2=1
 Rc1=0.01
 Q=(np.transpose(C)@C+Qc1*np.eye(A.shape[1]))*Qc2
 Q[0,0]=10
 Q[1,1]=10
-#Q[3,3]=100
+
 R=Rc1*np.eye(B.shape[1])
 
 #%% riccati equation
@@ -50,7 +45,8 @@ x10,x20,x30,x40=[12.4,12.7,1.8,1.4]
 u10,u20=[3,3]
 g=981
 X0=[x10,x20,x30,x40]
-#%% Simulation
+
+#%% Simulation intialization
 
 tl=300
 tlk=100
@@ -72,7 +68,7 @@ u1=np.zeros(len(t)-1)
 u2=np.zeros(len(t)-1)
 deltaT=1/tlk
 
-#%%
+#%% Non linear LQR Simulation
 
 
 def f(X0):
@@ -87,37 +83,11 @@ for i in range(len(t)-1):
     u10,u20=U[i,:]
     X[i+1,:]=X[i,:]+deltaT*f(X[i,:])   
     U[i+1,:]=Us+Klqr@(X[i+1,:]-Xs)  
-      
-    
-#%% plot Nonlinear LQR
 
 Xs_plot=np.array([[Xs[0]*np.ones(t.size)],[Xs[1]*np.ones(t.size)],[Xs[2]*np.ones(t.size)],[Xs[3]*np.ones(t.size)]])
-# plt.figure(1)
-# plt.subplot(211)
-# plt.title('Non-linear LQR')
-# plt.plot(t,X[:,0],t,Xs_plot[0,:].T,'--')
-# plt.legend(['x1','Setpoint'])
-# plt.ylabel('Height')
-# plt.subplot(212)
-# plt.plot(t,X[:,1],t,Xs_plot[1,:].T,'--')
-# plt.legend(['x2','Setpoint'])
-# plt.xlabel('Time')
-# plt.ylabel('Height')
-
-# plt.figure(2)
-# plt.subplot(211)
-# plt.title('Non-linear LQR')
-# plt.plot(t,X[:,2],t,Xs_plot[2,:].T,'--')
-# plt.legend(['x3','Setpoint'])
-# plt.ylabel('Height')
-# plt.subplot(212)
-# plt.plot(t,X[:,3],t,Xs_plot[3,:].T,'--')
-# plt.legend(['x4','Setpoint'])
-# plt.xlabel('Time')
-# plt.ylabel('Height')
 
 
-#%% Linear LQR
+#%% Linear LQR simulation
 Alqr=A+B@Klqr
 
 Xl=np.zeros((len(t),4))
@@ -125,31 +95,7 @@ Xl[0,:]=X0
 for k in range(len(t)-1):
     Xl[k+1]=Xl[k]+(Alqr@(Xl[k,:]-Xs))*deltaT
     
-# plt.figure(3)
-# plt.subplot(211)
-# plt.title('Linear LQR')
-# plt.plot(t,Xl[:,0],t,Xs_plot[0,:].T,'--')
-# plt.legend(['x1','Setpoint'])
-# plt.ylabel('Height')
-# plt.subplot(212)
-# plt.plot(t,Xl[:,1],t,Xs_plot[1,:].T,'--')
-# plt.legend(['x2','Setpoint'])
-# plt.xlabel('Time')
-# plt.ylabel('Height')
-
-# plt.figure(4)
-# plt.subplot(211)
-# plt.title('Linear LQR')
-# plt.plot(t,Xl[:,2],t,Xs_plot[2,:].T,'--')
-# plt.legend(['x3','Setpoint'])
-# plt.ylabel('Height')
-# plt.subplot(212)
-# plt.plot(t,Xl[:,3],t,Xs_plot[3,:].T,'--')
-# plt.legend(['x4','Setpoint'])
-# plt.xlabel('Time')
-# plt.ylabel('Height')
-
-#%%
+#%% Plots  
 plt.figure(1)
 plt.subplot(211)
 plt.title('LQR')
