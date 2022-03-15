@@ -73,18 +73,3 @@ Average Consensus View project Algal bloom tracking using multi-agent system Vie
 project The Quadruple-Tank Process: A Multivariable Laboratory Process with an
 Adjustable Zero,” 2000, doi: 10.1109/87.845876.
 
-[3] P. Virtanen et al., “{SciPy} 1.0: Fundamental Algorithms for Scientific Computing in
-Python,” Nat. Methods, vol. 17, pp. 261–272, 2020, doi: 10.1038/s41592-019-0686-2.
-
-[4] T. E. Oliphant, “Python for scientific computing,” Comput. Sci. Eng., vol. 9, no. 3, pp. 10–
-20, May 2007, doi: 10.1109/MCSE.2007.58.
-
-[5] C. R. Harris et al., “Array programming with NumPy,” Nature, vol. 585, no. 7825. Nature
-Research, pp. 357–362, Sep. 17, 2020, doi: 10.1038/s41586-020-2649-2.
-
-[6] J. D. Hunter, “Matplotlib: A 2D graphics environment,” Comput. Sci. Eng., vol. 9, no. 3,
-pp. 90–95, 2007, doi: 10.1109/MCSE.2007.55.
-
-[7] A. Meurer et al., “SymPy: Symbolic computing in python,” PeerJ Comput. Sci., vol. 2017,
-no. 1, 2017, doi: 10.7717/peerj-cs.103.
-
