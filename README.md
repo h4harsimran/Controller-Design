@@ -51,7 +51,16 @@ The values of the parameters used for the model under study have been tabulated 
 
 ![image](https://user-images.githubusercontent.com/25398418/158437530-6d3ff604-1761-46a7-a502-b729f060dab9.png)
 
-## Tank Jacabian.py manual
+## Python files explained.
 
+**1. Tank jacobian.py:** To define model parameters, model function, perform steady state analysis, Calcualte Jacobian and export to excel files.
+
+**2. Tank-LQR.py:** Import Jacobian outputs, define State equation, Define LQR parameters (Use const function parameters to tune the controller response with trial and error), Solve Riccati equation to calculate gain K, Silmulate Linear and Non linear LQR controller.
+
+**3. Tank-MPCnew.py:** Import Jacobian outputs, define State equation, Convert to Discrete time model (Use const function parameters to tune the controller response with trial and error), Define MPC function, perform closed loop simulation using MPC controller.
+
+**4. Tank_MPC_NL.py:** Define Non-linear Function (Use const function parameters to tune the controller response with trial and error), Define MPC function, perform closed loop simulation using Non linear MPC controller.
+
+**5. Tank_MinP.py:** Define process parameters, define control parameters (Use const function parameters to tune the controller response with trial and error), use symbolic calculation to solve Minimum phase equations and get State and costate equation, define function for Boundary value problem and Boundary conditions, Solve boundary Value problem to get optimal controller solutions with Minimum Phase implementation.
 
 
